@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Reflection;
 using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace freeway
 {
@@ -13,8 +10,22 @@ namespace freeway
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            var controller = new IndexController();
-            controller.index();
+            string controller;
+            string action;
+
+            if(freeway.Request.path() == "/about")
+            {
+                controller = "IndexController";
+                action = "about";
+            } else {
+                controller = "IndexController";
+                action = "index";
+            }
+
+            Type type = Type.GetType(controller);
+            Object obj = Activator.CreateInstance(type);
+            MethodInfo method = type.GetMethod(action);
+            method.Invoke(obj, null);
         }
 
     }
